@@ -118,8 +118,9 @@ class Scheduler:
             icon = snake.getTails()[0].getIcon()
             for i in range(len(snake.getTails())):
                 tail = snake.getTails()[i]
-                print('x, y = ' + str(tail.getX()) + ', ' + str(tail.getY()))
-                # self._screenService(tail.getX(),tail.getY(),color,icon)
+                x = int(tail.getX())
+                y = int(tail.getY())
+                self._screenService.draw_icon(x,y,color,icon)
         
         
 
