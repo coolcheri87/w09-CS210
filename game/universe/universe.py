@@ -1,9 +1,9 @@
 
 
 import sys
-sys.path.append('..')
+sys.path.append('.')
 from .pixel import Pixel
-from score import Score
+from ..gameScore import GameScore
 
 
 class Universe:
@@ -15,5 +15,6 @@ class Universe:
         self.score2 = score2
         self.pixel = Pixel()
 
-        
+    def getCols(self):
+        return self.cols
 

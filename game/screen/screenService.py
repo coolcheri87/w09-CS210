@@ -2,41 +2,21 @@
 import pyray as pr
 import sys
 sys.path.append('.')
+from ..universe.pixel import Pixel
 
 
 class ScreenService:
 
-    def __init__(self, width, height, fallers):
+    def __init__(self, width, height, pixel):
         self._width = width
         self._height = height+1
-        self._cell_size = 30
-        self._fallers = fallers
-
-    def close_window(self):
-        pr.close_window()
+        self._pixel = pixel
+        self._cell_size = self._pixel.getPixelSize()
 
     def clear_buffer(self):
         pr.begin_drawing()
         pr.clear_background(pr.BLACK)
     
-    def draw_faller(self, faller, x):
-        text = faller.getSymbol()
-        y = faller.getHeight()
-        pr.draw_text(text,x*self._cell_size,y*self._cell_size,self._cell_size,faller.getColor())
-
-    def draw_fallers(self, fallers):
-        for x in range(0,self._width):
-            self.draw_faller(fallers[x],x)
-
-    def draw_player(self, player):
-        x = player.getX()*self._cell_size
-        y = (self._height-1)*self._cell_size
-        pr.draw_text(player.getSymbol(),x,y,self._cell_size,pr.YELLOW)
-        y = self._height*self._cell_size
-        text = 'Player: ' + player.getName() + " - Score: " + str(player.getScore())
-        pr.draw_text(text,0,y,self._cell_size,pr.WHITE)
-
-
     def flush_buffer(self):
         pr.end_drawing()
 
@@ -46,9 +26,20 @@ class ScreenService:
     def get_height(self):
         return self._height
 
-    def is_window_open(self):
-        return not pr.window_should_close()
-
+    # This is how we start
     def open_window(self):
         pr.init_window(self._width*self._cell_size, (self._height+1)*self._cell_size, 'Greed 1.00.20220219')
         pr.set_target_fps(30)
+
+    # This is how we see if it is still open
+    def is_window_open(self):
+        return not pr.window_should_close()
+
+    # This is how we draw an icon onto the screen
+    def draw_icon(self,x,y,color,icon):
+        pr.draw_text(icon,x,y,self._cell_size,color)
+
+    # This is how we end
+    def close_window(self):
+        pr.close_window()
+
