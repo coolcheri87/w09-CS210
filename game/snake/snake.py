@@ -11,4 +11,4 @@ class Snake(Animal):
         self.name = 'Snake'
 
     def getName(self):
-        return "I'm a slithering " + self.name
+        return "I'm a slithering " + self.nameI 
