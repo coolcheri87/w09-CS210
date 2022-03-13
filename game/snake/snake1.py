@@ -3,32 +3,20 @@
 
 import pyray
 from .animal import Animal
+from .getDirection import GetDirection
 
 
 class Snake1(Animal):
 
-    def __init__(self):
+    def __init__(self,x,y):
         super().__init__()
-        self.name = 'Snake'
+        self.name = 'Snake1'
         self.color = pyray.YELLOW
-        self.dx = -1
+        self.setX(x)
+        self.setY(y)
+        self._getDirection = GetDirection(pyray.KEY_A,pyray.KEY_W,pyray.KEY_S,pyray.KEY_D)
 
     def getName(self):
-        return "I'm a slithering " + self.nameI 
+        return "I'm a slimy slithering " + self.name 
 
-    # Set for asd
-    def get_direction(self,x):
-
-        if (x > 0):
-            if (x == pyray.KEY_A): # left
-                self.dx = -1
-                self.dy = 0
-            if (x == pyray.KEY_D): # right
-                self.dx = 1
-                self.dy = 0
-            if (x == pyray.KEY_S): # down
-                self.dx = 0
-                self.dy = 1
-            if (x == pyray.KEY_W): # up
-                self.dx = 0
-                self.dy = -1
+        

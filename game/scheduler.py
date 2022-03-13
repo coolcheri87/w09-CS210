@@ -1,5 +1,6 @@
 
 import pyray
+import random
 import sys
 import time
 
@@ -22,13 +23,11 @@ class Scheduler:
         self.score2 = GameScore()
         self.universe = Universe(self.cols,self.rows,self.score1,self.score2)
         self.pixel = Pixel()
-        self.snake1 = Snake1()
-        self.snake2 = Snake2()
+        self.snake1 = Snake1(random.randint(0,self.cols)*self.pixel.getPixelSize(),random.randint(0,self.rows)*self.pixel.getPixelSize())
+        self.snake2 = Snake2(random.randint(0,self.cols)*self.pixel.getPixelSize(),random.randint(0,self.rows)*self.pixel.getPixelSize())
         self._screenService = ScreenService(self.cols,self.rows,self.pixel)
 
     def playGame(self):
-        done = False
-
         # Initialize graphics...
         self._screenService.open_window()
 
@@ -43,7 +42,7 @@ class Scheduler:
                 self._screenService.close_window()
 
             # Move snakes and check for collisions
-            if (((int(1000*time.time())-timeStart)%100)==0): # Every 1/4 second move
+            if (((int(1000*time.time())-timeStart)%1000)==0): # Every 1/4 second move
                 # Check to see if this is an adder time
                 adder = False
                 if (((int(1000*time.time())-timeStart)%3000)==0): # Every 3 seconds add
@@ -57,11 +56,70 @@ class Scheduler:
                 self.moveSnake(self.snake2,adder)
 
                 # Check for collisions
+                self.check4Collisions()
 
                 # Output score
+                self.outputScore()
 
                 # Flush buffer before moving on...
                 self._screenService.flush_buffer()
+
+
+    def outputScore(self):
+        out1 = "%s%s%s %s,%s"%(self.snake1.name," - Score = ",self.score1.getScore(),self.snake1.getX(),self.snake1.getY())
+        out2 = "%s%s%s %s,%s"%(self.snake2.name," - Score = ",self.score2.getScore(),self.snake2.getX(),self.snake2.getY())
+        x1 = self.pixel.getPixelSize()
+        x2 = (self.cols-len(out2))*self.pixel.getPixelSize()
+        y = (self.rows+1)*self.pixel.getPixelSize()
+        self._screenService.draw_icon(x1,y,pyray.WHITE,out1)
+        self._screenService.draw_icon(x2,y,pyray.WHITE,out2)
+
+
+    def check4Collisions(self):
+        # Check for snake1
+        safe1 = True
+        x1 = self.snake1.getX()
+        y1 = self.snake1.getY()
+        safe2 = True
+        x2 = self.snake2.getX()
+        y2 = self.snake2.getY()
+        # Check for head to head collision
+        if ((x1 == x2) and (y1 == y2)):
+            safe1 = False
+            safe2 = False
+            return False
+
+        # Check for snake1 to own tail collision
+        if (not safe1):
+            tail = self.snake1.getTails()
+            for i in range(tail):
+                if ((x1 == tail[i].getX()) and (y1 == tail[i].getY())):
+                    safe1 = False
+        # Check for snake1 to other snake tail collision
+        if (not safe1):
+            tail = self.snake2.getTails()
+            for i in range(tail):
+                if ((x1 == tail[i].getX()) and (y1 == tail[i].getY())):
+                    safe1 = False
+        if (not safe1):
+            self.score2.incrementScore()
+
+        # Check for snake2 to own tail collision
+        if (not safe2):
+            tail = self.snake2.getTails()
+            for i in range(tail):
+                if ((x2 == tail[i].getX()) and (y2 == tail[i].getY())):
+                    safe2 = False
+        # Check for snake2 to other snake tail collision
+        if (not safe2):
+            tail = self.snake1.getTails()
+            for i in range(tail):
+                if ((x2 == tail[i].getX()) and (y2 == tail[i].getY())):
+                    safe2 = False
+        if (not safe2):
+            self.score1.incrementScore()
+
+        return (safe1 and safe2) # Handle collisions...
 
 
     def getExit(self,x):
@@ -70,10 +128,17 @@ class Scheduler:
                 return True
         return False
 
+
     def moveSnake(self,snake,adder):
-        # Draw the snake head
-        x = snake.getX()+snake.getDX()*self.pixel.getPixelSize()
-        y = snake.getY()+snake.getDY()*self.pixel.getPixelSize()
+        # Draw the snake head at new location...
+        # Current position
+        x1 = snake.getX()
+        y1 = snake.getY()
+        # New position
+        x = x1+snake.getDX()*self.pixel.getPixelSize()
+        y = y1+snake.getDY()*self.pixel.getPixelSize()
+
+        # Handle moving off the screen...
         if (x < 0):
             x = self.cols*self.pixel.getPixelSize()
         if (x > self.cols*self.pixel.getPixelSize()):
@@ -82,9 +147,7 @@ class Scheduler:
             y = self.rows*self.pixel.getPixelSize()
         if (y > self.rows*self.pixel.getPixelSize()):
             y = self.pixel.getPixelSize()
-        # Get previous position
-        x1 = snake.getX()+snake.getDX()*self.pixel.getPixelSize()
-        y1 = snake.getY()+snake.getDY()*self.pixel.getPixelSize()
+
         # Get next position
         snake.setX(x)
         snake.setY(y)
@@ -122,5 +185,3 @@ class Scheduler:
                 y = int(tail.getY())
                 self._screenService.draw_icon(x,y,color,icon)
         
-        
-

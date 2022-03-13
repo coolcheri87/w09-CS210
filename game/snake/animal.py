@@ -1,6 +1,7 @@
 
 
 import pyray
+from .getDirection import GetDirection
 from .head import Head
 from .tail import Tail
 
@@ -14,8 +15,7 @@ class Animal:
         self.len = 1
         self.x = 10
         self.y = 10
-        self.dx = 0
-        self.dy = 0
+        self._getDirection = GetDirection(pyray.KEY_F,pyray.KEY_T,pyray.KEY_G,pyray.KEY_H)
 
     # Getters
     def getColor(self):
@@ -35,10 +35,10 @@ class Animal:
 
     # Movement and location
     def getDX(self):
-        return self.dx
+        return self._getDirection.getDX()
 
     def getDY(self):
-        return self.dy
+        return self._getDirection.getDY()
 
     def getX(self):
         return self.x
@@ -46,18 +46,11 @@ class Animal:
     def getY(self):
         return self.y
 
-
     # Setters
     def setLength(self,len):
         self.len = len
         
-    # Movement and Location
-    def setDX(self,dx):
-        self.dx = dx
-
-    def setDY(self,dy):
-        self.dy = dy
-
+    # Location
     def setX(self,x):
         self.x = x
 
@@ -66,17 +59,4 @@ class Animal:
 
     # Set for fgh
     def get_direction(self,x):
-
-        if (x > 0):
-            if (x == pyray.KEY_F): # left
-                self.dx = -1
-                self.dy = 0
-            if (x == pyray.KEY_H): # right
-                self.dx = 1
-                self.dy = 0
-            if (x == pyray.KEY_G): # down
-                self.dx = 0
-                self.dy = 1
-            if (x == pyray.KEY_T): # up
-                self.dx = 0
-                self.dy = -1
+        self._getDirection.get_direction(x)
