@@ -42,7 +42,7 @@ class Scheduler:
                 self._screenService.close_window()
 
             # Move snakes and check for collisions
-            if (((int(1000*time.time())-timeStart)%1000)==0): # Every 1/4 second move
+            if (((int(1000*time.time())-timeStart)%250)==0): # Every 1/4 second move
                 # Check to see if this is an adder time
                 adder = False
                 if (((int(1000*time.time())-timeStart)%3000)==0): # Every 3 seconds add
