@@ -53,10 +53,11 @@ class Scheduler:
 
                 # Move snakes
                 self.moveSnake(self.snake1,adder)
+                self.check4Collisions(self.snake1,self.snake2)
                 self.moveSnake(self.snake2,adder)
+                self.check4Collisions(self.snake2,self.snake1)
 
                 # Check for collisions
-                self.check4Collisions()
 
                 # Output score
                 self.outputScore()
@@ -75,51 +76,33 @@ class Scheduler:
         self._screenService.draw_icon(x2,y,pyray.WHITE,out2)
 
 
-    def check4Collisions(self):
+    def check4Collisions(self,snake1,snake2):
         # Check for snake1
-        safe1 = True
-        x1 = self.snake1.getX()
-        y1 = self.snake1.getY()
-        safe2 = True
-        x2 = self.snake2.getX()
-        y2 = self.snake2.getY()
+        safe = True
+        x1 = snake1.getX()
+        y1 = snake1.getY()
+        x2 = snake2.getX()
+        y2 = snake2.getY()
         # Check for head to head collision
         if ((x1 == x2) and (y1 == y2)):
-            safe1 = False
-            safe2 = False
             return False
 
         # Check for snake1 to own tail collision
-        if (not safe1):
+        if (not safe):
             tail = self.snake1.getTails()
             for i in range(tail):
                 if ((x1 == tail[i].getX()) and (y1 == tail[i].getY())):
-                    safe1 = False
+                    safe = False
         # Check for snake1 to other snake tail collision
-        if (not safe1):
+        if (not safe):
             tail = self.snake2.getTails()
             for i in range(tail):
                 if ((x1 == tail[i].getX()) and (y1 == tail[i].getY())):
-                    safe1 = False
-        if (not safe1):
+                    safe = False
+        if (not safe):
             self.score2.incrementScore()
 
-        # Check for snake2 to own tail collision
-        if (not safe2):
-            tail = self.snake2.getTails()
-            for i in range(tail):
-                if ((x2 == tail[i].getX()) and (y2 == tail[i].getY())):
-                    safe2 = False
-        # Check for snake2 to other snake tail collision
-        if (not safe2):
-            tail = self.snake1.getTails()
-            for i in range(tail):
-                if ((x2 == tail[i].getX()) and (y2 == tail[i].getY())):
-                    safe2 = False
-        if (not safe2):
-            self.score1.incrementScore()
-
-        return (safe1 and safe2) # Handle collisions...
+        return (safe) # Handle collisions...
 
 
     def getExit(self,x):
